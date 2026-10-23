@@ -1,0 +1,162 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Lokadata Wallacea</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700&family=Source+Sans+3:wght@400;600;700&family=JetBrains+Mono:wght@400;600&display=swap">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'self'; style-src-elem 'self' https://fonts.googleapis.com; style-src-attr 'unsafe-inline'; font-src https://fonts.gstatic.com; img-src 'self' data:; connect-src 'none'; base-uri 'none'; form-action 'none'; object-src 'none'; upgrade-insecure-requests">
+<meta name="referrer" content="strict-origin-when-cross-origin">
+<meta name="description" content="Lokadata Wallacea by KotaBerdaya: official BKPM investment projects and World Bank, ADB and JICA programmes in eastern Indonesia, mapped against BPS poverty and HDI.">
+<link rel="stylesheet" href="assets/style.css" integrity="sha384-wHpKSuKAIvb/YQLNcoSn0mlxfxVvgnoopFRcMb0kX+N1OP9fSFBn4yiFakl33qLQ">
+</head>
+<body>
+<div class="app">
+  <header class="top">
+    <div class="brand">
+      <svg class="mark" viewBox="0 0 40 40" aria-hidden="true">
+        <rect width="40" height="40" rx="10" fill="var(--brand)"/>
+        <path d="M9 27c4-1 6-5 9-5s4 3 7 3 4-4 6-6" stroke="var(--accent)" stroke-width="2.6" fill="none" stroke-linecap="round"/>
+        <circle cx="14" cy="15" r="3" fill="var(--surface)"/><circle cx="26" cy="12" r="2.2" fill="var(--surface)"/><circle cx="30" cy="20" r="1.6" fill="var(--surface)"/>
+      </svg>
+      <div>
+        <h1>Lokadata <span>Wallacea</span></h1>
+        <p>KotaBerdaya · Investment opportunities and development gaps in eastern Indonesia</p>
+      </div>
+    </div>
+    <div class="kpis" aria-live="polite">
+      <div class="kpi"><b id="k-count">0</b><small>Projects</small></div>
+      <div class="kpi"><b id="k-val">–</b><small>Investment value, IDR</small></div>
+      <div class="kpi"><b id="k-irr">–</b><small>Median IRR</small></div>
+      <div class="kpi"><b id="k-prov">0</b><small>Provinces</small></div>
+    </div>
+    <button class="srcflag" id="b-src" title="Open data sources">Data: BKPM · BPS</button>
+  </header>
+
+  <div class="main">
+    <aside class="rail">
+      <div class="tabs" role="tablist">
+        <button role="tab" id="t-opps" aria-selected="true" data-tab="opps">Projects</button>
+        <button role="tab" id="t-donors" aria-selected="false" data-tab="donors">Donors</button>
+        <button role="tab" id="t-gap" aria-selected="false" data-tab="gap">Disparity</button>
+        <button role="tab" id="t-about" aria-selected="false" data-tab="about">About</button>
+      </div>
+
+      <div class="pane" id="p-opps">
+        <div class="filters">
+          <input class="search" id="q" type="search" placeholder="Search project, regency or commodity" aria-label="Search projects">
+          <div class="row2">
+            <select id="f-prov" aria-label="Province"><option value="">All provinces</option></select>
+            <select id="f-sort" aria-label="Sort">
+              <option value="gap">Sort: largest gap first</option>
+              <option value="val">Sort: investment value</option>
+              <option value="irr">Sort: highest IRR</option>
+              <option value="year">Sort: newest listing</option>
+            </select>
+          </div>
+          <div class="row2">
+            <select id="f-kind" aria-label="Listing type">
+              <option value="">All listing types</option>
+              <option value="IPRO">IPRO · ready to offer</option>
+              <option value="PPI">PPI · opportunity map</option>
+              <option value="PID">PID · regional listing</option>
+            </select>
+            <select id="f-ticket" aria-label="Investment value">
+              <option value="">Any value</option><option value="s">Under Rp 100 bn</option><option value="m">Rp 100 bn – 1 tn</option><option value="l">Over Rp 1 tn</option>
+            </select>
+          </div>
+          <div class="chips" id="chips"></div>
+        </div>
+        <div class="listmeta"><span id="lm-count"></span><span style="display:flex;gap:14px"><button class="linkbtn" id="b-short" aria-pressed="false">Shortlist (0)</button><button class="linkbtn" id="b-reset">Reset</button></span></div>
+        <ul class="opps" id="list"></ul>
+      </div>
+
+      <div class="pane" id="p-donors" hidden>
+        <div class="filters">
+          <div class="chips" id="dchips"></div>
+          <div class="row2">
+            <select id="d-prov" aria-label="Province"><option value="">All provinces</option></select>
+            <select id="d-status" aria-label="Status">
+              <option value="">Active and completed</option><option value="Active">Active only</option><option value="Completed">Completed only</option>
+            </select>
+          </div>
+        </div>
+        <div class="dsum" id="dsum"></div>
+        <ul class="dcards" id="dlist"></ul>
+      </div>
+
+      <div class="pane" id="p-gap" hidden>
+        <div class="prov">
+          <h2>Where the gap is widest</h2>
+          <p class="lead" id="g-lead"></p>
+          <div class="seg" role="group" aria-label="Indicator">
+            <button aria-pressed="true" data-ind="pov">Poverty rate</button>
+            <button aria-pressed="false" data-ind="hdi">Human Development Index</button>
+          </div>
+          <div class="chartbox" id="chart"></div>
+          <div class="callout" id="g-callout"></div>
+        </div>
+      </div>
+
+      <div class="pane" id="p-about" hidden>
+        <div class="about">
+          <h2>Kota bertumbuh dengan data, dialog dan aksi</h2>
+          <p>Lokadata Wallacea is KotaBerdaya's open GIS platform. It puts the strategic potential and the development challenges of eastern Indonesian cities on one map, so residents, city governments and investors can see the same picture and act on it.</p>
+          <p>Goals from the business plan: refresh the profiles of 5 eastern Indonesian cities at least every two years, reach more than half of residents in each city once a year, and broker at least 5 government–investor MoUs on city-owned assets within five years.</p>
+          <ol class="steps">
+            <li><div><b>IGNITE</b><span>Stakeholder mapping, local dialogues and community-based data systems.</span></div></li>
+            <li><div><b>UNVEIL</b><span>Spatial analysis, collaborative interpretation of the data, and launch of this platform.</span></div></li>
+            <li><div><b>EMPOWER</b><span>Participatory design, activation projects, advocacy and advisory support for partners.</span></div></li>
+          </ol>
+          <div class="note" id="sources">
+            <b>Data sources</b>
+            <ul>
+              <li><b>Projects:</b> Kementerian Investasi dan Hilirisasi/BKPM, Potensi Investasi Regional (PIR), <a href="https://regionalinvestment.bkpm.go.id/peluang_investasi" target="_blank" rel="noopener">regionalinvestment.bkpm.go.id</a>. All listings in NTB, NTT, Sulawesi, Maluku and Papua, retrieved 23 Oct 2026. Names, values, IRR, NPV, payback and coordinates are as published.</li>
+              <li><b>Poverty rate:</b> BPS, <a href="https://www.bps.go.id/id/statistics-table/2/MTkyIzI=/persentase-penduduk-miskin--p0--menurut-provinsi-dan-daerah.html" target="_blank" rel="noopener">Persentase Penduduk Miskin (P0) Menurut Provinsi</a>, March 2026 (updated 5 Aug 2026).</li>
+              <li><b>HDI:</b> BPS, <a href="https://www.bps.go.id/id/statistics-table/2/NDk0IzI=/-metode-baru-indeks-pembangunan-manusia-menurut-provinsi.html" target="_blank" rel="noopener">[Metode Baru] IPM menurut Provinsi</a>, 2024 (updated 15 May 2025).</li>
+              <li><b>Donor programmes:</b> World Bank and ADB records from <a href="https://d-portal.org/" target="_blank" rel="noopener">IATI via d-portal</a> and their project pages; JICA from its <a href="https://libportal.jica.go.jp/library/Public/files/plan/in-operation/english/SoutheastAsia/006_Indonesia-e.pdf" target="_blank" rel="noopener">Indonesia project map (May 2025)</a> and press releases. Only programmes that name an eastern province or site are shown; nationwide programmes are left out. Locations are at province or site level, not exact footprints.</li>
+              <li><b>Boundaries:</b> 38-province GeoJSON (ardian28/GeoJson-Indonesia-38-Provinsi), simplified for the web.</li>
+            </ul>
+            <b>Listing types</b>
+            <ul>
+              <li><b>IPRO</b>, Investment Project Ready to Offer: a full feasibility study prepared by BKPM.</li>
+              <li><b>PPI</b>, Peta Peluang Investasi: a BKPM pre-feasibility profile.</li>
+              <li><b>PID</b>, Peluang Investasi Daerah: proposed by the regional government, often still a draft.</li>
+            </ul>
+            <b>Corrections</b>
+            <ul>
+              <li>Mautika Mandalika Hotel: BKPM's point falls in the sea east of Sumbawa, so it is placed at Kuta village, Pujut, as named in the listing.</li>
+              <li>Beef Cattle Farming, Bone: the BKPM record has no valid coordinates, so it is placed in Barebbo district as named in the listing.</li>
+            </ul>
+            <span>Values are investment estimates from feasibility documents, not offers. Confirm with BKPM or the regional investment office (DPMPTSP) before acting on them.</span>
+          </div>
+        </div>
+      </div>
+    </aside>
+
+    <div class="mapwrap">
+      <div id="map" role="region" aria-label="Map of eastern Indonesia investment projects"></div>
+      <div class="mapctl">
+        <div class="seg" role="group" aria-label="Map shading">
+          <button aria-pressed="true" data-layer="pov">Poverty</button>
+          <button aria-pressed="false" data-layer="hdi">HDI</button>
+          <button aria-pressed="false" data-layer="none">Off</button>
+        </div>
+        <div class="seg" role="group" aria-label="Overlays">
+          <button aria-pressed="true" id="b-donors">Donors</button>
+          <button aria-pressed="true" id="b-wallace">Wallace Line</button>
+        </div>
+      </div>
+      <div class="legend" id="legend"></div>
+      <section class="detail" id="detail" hidden aria-live="polite"></section>
+      <div class="toast" id="toast" hidden></div>
+    </div>
+  </div>
+</div>
+<script src="vendor/leaflet-1.9.4/leaflet.js" integrity="sha384-cxOPjt7s7Iz04uaHJceBmS+qpjv2JkIHNVcuOrM+YHwZOmJGBXI00mdUXEq65HTH"></script>
+<script src="assets/provinces.js" integrity="sha384-8A7kAVQ8qHQvsaLAuUFKDGfgP08NA0Bbv62toiEvz9+aJcRqUQDBNyshWE2+RrGM"></script>
+<script src="assets/app.js" integrity="sha384-02NSpXCLiBomtX7RLhBSgez3OlnHXe5RwqhMGBMX2l8SsAk1zqMRgOEVuSk+1bU/"></script>
+</body>
+</html>
